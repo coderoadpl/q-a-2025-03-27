@@ -59,4 +59,75 @@ describe('Memory game store', () => {
       })
     })
   })
+
+  describe('User wants to flip card', () => {
+    it('should flip card', () => {
+      const { getState } = createMemoryGameStoreWithMockedTime()
+
+      getState().startGame('easy')
+
+      const availableCardsIds = getState().board.map((card) => card.id)
+
+      getState().flipCard(availableCardsIds[0])
+
+      const finalState = getState()
+
+      const flippedCard = finalState.board.find((card) => card.id === availableCardsIds[0])
+
+      expect(flippedCard!.isFlipped).toBe(true)
+    })
+  })
+
+  describe('User wants to flip three cards in a row', () => {
+    describe('and two first cards matched', () => {
+      it('should show all three cards flipped', () => {
+        const { getState } = createMemoryGameStoreWithMockedTime()
+
+        getState().startGame('easy')
+
+        const firstCardId = getState().board[0].id
+        const matchedCardId = getState().board
+          .filter((card) => card.id !== firstCardId)
+          .find((card) => card.value === getState().board[0].value)!.id
+        const thirdCardId = getState().board
+          .filter((card) => card.id !== firstCardId && card.id !== matchedCardId)[0].id
+
+        getState().flipCard(firstCardId)
+        getState().flipCard(matchedCardId)
+        getState().flipCard(thirdCardId)
+
+        const finalState = getState()
+
+        expect(finalState.board.find((card) => card.id === firstCardId)!.isFlipped).toBe(true)
+        // expect(finalState.board.find((card) => card.id === firstCardId)!.isMatched).toBe(true)
+        expect(finalState.board.find((card) => card.id === matchedCardId)!.isFlipped).toBe(true)
+        // expect(finalState.board.find((card) => card.id === matchedCardId)!.isMatched).toBe(true)
+        expect(finalState.board.find((card) => card.id === thirdCardId)!.isFlipped).toBe(true)
+      })
+    })
+    describe('and two first cards not matched', () => {
+        it('should show only last card flipped', () => {
+          const { getState } = createMemoryGameStoreWithMockedTime()
+
+          getState().startGame('easy')
+
+            const firstCardId = getState().board[0].id
+            const notMatchedCardId = getState().board
+              .filter((card) => card.id !== firstCardId)
+              .find((card) => card.value !== getState().board[0].value)!.id
+            const thirdCardId = getState().board
+              .filter((card) => card.id !== firstCardId && card.id !== notMatchedCardId)[0].id
+
+            getState().flipCard(firstCardId)
+            getState().flipCard(notMatchedCardId)
+            getState().flipCard(thirdCardId)
+
+            const finalState = getState()
+
+            expect(finalState.board.find((card) => card.id === firstCardId)!.isFlipped).toBe(false)
+            expect(finalState.board.find((card) => card.id === notMatchedCardId)!.isFlipped).toBe(false)
+            expect(finalState.board.find((card) => card.id === thirdCardId)!.isFlipped).toBe(true) 
+        })
+    })
+  })
 })
