@@ -1,5 +1,16 @@
+import { useMemoryGameStore } from "./storeToReactAdapter";
+
 const App = () => {
-  return <h1>Hello World</h1>;
+  const count = useMemoryGameStore((state) => state.count)
+  const setCount = useMemoryGameStore((state) => state.setCount)
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
 };
 
 export default App;
