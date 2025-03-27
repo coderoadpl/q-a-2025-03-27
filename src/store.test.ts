@@ -12,6 +12,18 @@ const createMemoryGameStoreWithMockedTime = () => {
 
 describe('Memory game store', () => {
   describe('User wants to start game', () => {
+    describe('with very easy level', () => {
+      it('should start game with 4 cards', () => {
+        const memoryGameStore = createMemoryGameStoreWithMockedTime()
+        const initialState = memoryGameStore.getState()
+
+        initialState.startGame('very-easy')
+
+        const finalState = memoryGameStore.getState()
+
+        expect(finalState.board.length).toBe(4)
+      })
+    })
     describe('with easy level', () => {
       it('should start game with 8 cards', () => {
         const memoryGameStore = createMemoryGameStoreWithMockedTime()
@@ -64,7 +76,7 @@ describe('Memory game store', () => {
     it('should flip card', () => {
       const { getState } = createMemoryGameStoreWithMockedTime()
 
-      getState().startGame('easy')
+      getState().startGame('very-easy')
 
       const availableCardsIds = getState().board.map((card) => card.id)
 
@@ -98,10 +110,10 @@ describe('Memory game store', () => {
 
         const finalState = getState()
 
-        expect(finalState.board.find((card) => card.id === firstCardId)!.isFlipped).toBe(true)
-        // expect(finalState.board.find((card) => card.id === firstCardId)!.isMatched).toBe(true)
-        expect(finalState.board.find((card) => card.id === matchedCardId)!.isFlipped).toBe(true)
-        // expect(finalState.board.find((card) => card.id === matchedCardId)!.isMatched).toBe(true)
+        expect(finalState.board.find((card) => card.id === firstCardId)!.isFlipped).toBe(false)
+        expect(finalState.board.find((card) => card.id === firstCardId)!.isMatched).toBe(true)
+        expect(finalState.board.find((card) => card.id === matchedCardId)!.isFlipped).toBe(false)
+        expect(finalState.board.find((card) => card.id === matchedCardId)!.isMatched).toBe(true)
         expect(finalState.board.find((card) => card.id === thirdCardId)!.isFlipped).toBe(true)
       })
     })
@@ -125,7 +137,9 @@ describe('Memory game store', () => {
             const finalState = getState()
 
             expect(finalState.board.find((card) => card.id === firstCardId)!.isFlipped).toBe(false)
+            expect(finalState.board.find((card) => card.id === firstCardId)!.isMatched).toBe(false)
             expect(finalState.board.find((card) => card.id === notMatchedCardId)!.isFlipped).toBe(false)
+            expect(finalState.board.find((card) => card.id === notMatchedCardId)!.isMatched).toBe(false)
             expect(finalState.board.find((card) => card.id === thirdCardId)!.isFlipped).toBe(true) 
         })
     })
