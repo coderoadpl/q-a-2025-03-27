@@ -124,9 +124,7 @@ export const createMemoryGameStore = ({
       }
     },
     restartGame: () => {
-      if(getState().startTime && getState().endTime) {
-        set({ board: [], startTime: null, endTime: null })
-      }
+      set({ board: [], startTime: null, endTime: null })
     },
   })
 

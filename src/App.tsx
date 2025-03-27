@@ -5,7 +5,6 @@ import {
   Typography, 
   Button, 
   Container, 
-  Grid, 
   Paper, 
   Stack,
   ThemeProvider,
@@ -16,8 +15,8 @@ const theme = createTheme();
 
 const App = () => {
   const { board, startTime, endTime, startGame, flipCard, restartGame } = useMemoryGameStore((state) => state);
-  const isRestartAvailable = Boolean(startTime && endTime)
   const isGameStarted = Boolean(startTime && !endTime)
+  const isRestartAvailable = isGameStarted
 
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -33,7 +32,7 @@ const App = () => {
   }, [startTime, endTime]);
 
   // Calculate grid columns based on board size
-  const gridColumns = Math.sqrt(board.length) || 2;
+  const gridColumns = Math.floor(Math.sqrt(board.length)) || 4;
 
   return (
     <ThemeProvider theme={theme}>
@@ -94,13 +93,14 @@ const App = () => {
           
           {/* Game board */}
           {board.length > 0 && (
-            <Grid 
-              container 
-              spacing={2}
+            <Box 
               sx={{ 
                 display: 'grid',
                 gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-                gap: 2
+                gap: 2,
+                width: '100%',
+                maxWidth: `${gridColumns * 100}px`,
+                margin: '0 auto'
               }}
             >
               {board.map((card) => (
@@ -109,8 +109,8 @@ const App = () => {
                   onClick={() => !card.isMatched && !endTime && flipCard(card.id)}
                   elevation={1}
                   sx={{
-                    width: 80, 
-                    height: 80,
+                    aspectRatio: '1/1',
+                    width: '100%',
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
@@ -133,7 +133,7 @@ const App = () => {
                   {(card.isFlipped || card.isMatched) ? card.value : '?'}
                 </Paper>
               ))}
-            </Grid>
+            </Box>
           )}
         </Box>
       </Container>
