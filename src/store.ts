@@ -30,6 +30,7 @@ export type TMemoryGameState = {
   endTime: number | null,
   startGame: (level: 'very-easy' | 'easy' | 'medium' | 'hard') => void
   flipCard: (id: string) => void
+  restartGame: () => void
 }
 
 const persistConfig = {
@@ -120,6 +121,11 @@ export const createMemoryGameStore = ({
       const allMatchedCards = finalBoard.filter((card) => card.isMatched)
       if (allMatchedCards.length === finalBoard.length) {
         set({ endTime: getTime() })
+      }
+    },
+    restartGame: () => {
+      if(getState().startTime && getState().endTime) {
+        set({ board: [], startTime: null, endTime: null })
       }
     },
   })

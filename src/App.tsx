@@ -15,7 +15,10 @@ import {
 const theme = createTheme();
 
 const App = () => {
-  const { board, startTime, endTime, startGame, flipCard } = useMemoryGameStore((state) => state);
+  const { board, startTime, endTime, startGame, flipCard, restartGame } = useMemoryGameStore((state) => state);
+  const isRestartAvailable = Boolean(startTime && endTime)
+  const isGameStarted = Boolean(startTime && !endTime)
+
   const [elapsedTime, setElapsedTime] = useState(0);
 
   // Update timer while game is running
@@ -40,10 +43,10 @@ const App = () => {
             Memory Game
           </Typography>
           
-          {/* Game controls */}
-          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-            <Button 
-              variant="contained" 
+          {!isGameStarted && (
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+              <Button 
+                variant="contained" 
               onClick={() => startGame('very-easy')}
             >
               Very Easy
@@ -65,9 +68,18 @@ const App = () => {
               onClick={() => startGame('hard')}
             >
               Hard
+              </Button>
+            </Stack>
+          )}
+
+          {isRestartAvailable && (
+            <Button 
+              variant="contained" 
+              onClick={restartGame}
+            >
+              Restart
             </Button>
-          </Stack>
-          
+          )}
           {/* Game status */}
           {startTime && (
             <Box sx={{ mb: 2 }}>
