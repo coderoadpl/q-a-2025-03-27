@@ -26,32 +26,38 @@ const cardsDeck = [
 
 export type TMemoryGameState = {
   board: TCardOnBoard[],
+  startTime: number | null,
   startGame: (level: 'easy' | 'medium' | 'hard') => void
 }
-
-const memoryGameStateCreator: StateCreator<TMemoryGameState> = (set) => ({
-  board: [],
-  startGame: (level: 'easy' | 'medium' | 'hard') => {
-    const numberOfCards = level === 'easy' ? 8 : level === 'medium' ? 12 : 16
-    const cards = cardsDeck.slice(0, numberOfCards / 2)
-
-    const cardsToBeAddedOnBoard = [...cards, ...cards].sort(() => Math.random() - 0.5)
-
-    const board = cardsToBeAddedOnBoard.map((card) => ({
-      ...card,
-      isFlipped: false,
-      isMatched: false,
-    }))
-
-    set({ board })
-  },
-})
 
 const persistConfig = {
   name: 'game-storage',
 }
 
-export const createMemoryGameStore = () => {
+export const createMemoryGameStore = ( {
+  getTime
+}: {
+  getTime: () => number
+} ) => {
+  const memoryGameStateCreator: StateCreator<TMemoryGameState> = (set) => ({
+    board: [],
+    startTime: null,
+    startGame: (level: 'easy' | 'medium' | 'hard') => {
+      const numberOfCards = level === 'easy' ? 8 : level === 'medium' ? 12 : 16
+      const cards = cardsDeck.slice(0, numberOfCards / 2)
+  
+      const cardsToBeAddedOnBoard = [...cards, ...cards].sort(() => Math.random() - 0.5)
+  
+      const board = cardsToBeAddedOnBoard.map((card) => ({
+        ...card,
+        isFlipped: false,
+        isMatched: false,
+      }))
+  
+      set({ board, startTime: getTime() })
+    },
+  })
+
   const memoryGameStore = createStore<TMemoryGameState>()(
     persist(
       memoryGameStateCreator,
