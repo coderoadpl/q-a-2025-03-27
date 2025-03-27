@@ -1,5 +1,18 @@
 import { useMemoryGameStore } from "./storeToReactAdapter";
 import { useEffect, useState } from "react";
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Container, 
+  Grid, 
+  Paper, 
+  Stack,
+  ThemeProvider,
+  createTheme
+} from "@mui/material";
+
+const theme = createTheme();
 
 const App = () => {
   const { board, startTime, endTime, startGame, flipCard } = useMemoryGameStore((state) => state);
@@ -20,74 +33,99 @@ const App = () => {
   const gridColumns = Math.sqrt(board.length) || 2;
 
   return (
-    <div className="flex flex-col items-center p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Memory Game</h1>
-      
-      {/* Game controls */}
-      <div className="mb-4 flex gap-2">
-        <button 
-          onClick={() => startGame('very-easy')}
-          className="px-3 py-1 bg-blue-500 text-white rounded"
-        >
-          Very Easy
-        </button>
-        <button 
-          onClick={() => startGame('easy')}
-          className="px-3 py-1 bg-blue-500 text-white rounded"
-        >
-          Easy
-        </button>
-        <button 
-          onClick={() => startGame('medium')}
-          className="px-3 py-1 bg-blue-500 text-white rounded"
-        >
-          Medium
-        </button>
-        <button 
-          onClick={() => startGame('hard')}
-          className="px-3 py-1 bg-blue-500 text-white rounded"
-        >
-          Hard
-        </button>
-      </div>
-      
-      {/* Game status */}
-      {startTime && (
-        <div className="mb-4">
-          <p>Time: {elapsedTime} seconds</p>
-          {endTime && (
-            <p className="font-bold text-green-600">
-              Game complete! Total time: {Math.floor((endTime - startTime) / 1000)} seconds
-            </p>
-          )}
-        </div>
-      )}
-      
-      {/* Game board */}
-      {board.length > 0 && (
-        <div 
-          className="grid gap-2" 
-          style={{ 
-            gridTemplateColumns: `repeat(${gridColumns}, 1fr)` 
-          }}
-        >
-          {board.map((card) => (
-            <div
-              key={card.id}
-              onClick={() => !card.isMatched && !endTime && flipCard(card.id)}
-              className={`
-                w-20 h-20 flex items-center justify-center text-3xl 
-                rounded cursor-pointer transition-all duration-200
-                ${card.isMatched ? 'bg-green-200' : card.isFlipped ? 'bg-blue-100' : 'bg-gray-300'}
-                ${!card.isMatched && !endTime ? 'hover:bg-gray-400' : ''}
-              `}
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md" sx={{ p: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
+            Memory Game
+          </Typography>
+          
+          {/* Game controls */}
+          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+            <Button 
+              variant="contained" 
+              onClick={() => startGame('very-easy')}
             >
-              {(card.isFlipped || card.isMatched) ? card.value : '?'}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+              Very Easy
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => startGame('easy')}
+            >
+              Easy
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => startGame('medium')}
+            >
+              Medium
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => startGame('hard')}
+            >
+              Hard
+            </Button>
+          </Stack>
+          
+          {/* Game status */}
+          {startTime && (
+            <Box sx={{ mb: 2 }}>
+              <Typography>Time: {elapsedTime} seconds</Typography>
+              {endTime && (
+                <Typography color="success.main" fontWeight="bold">
+                  Game complete! Total time: {Math.floor((endTime - startTime) / 1000)} seconds
+                </Typography>
+              )}
+            </Box>
+          )}
+          
+          {/* Game board */}
+          {board.length > 0 && (
+            <Grid 
+              container 
+              spacing={2}
+              sx={{ 
+                display: 'grid',
+                gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
+                gap: 2
+              }}
+            >
+              {board.map((card) => (
+                <Paper
+                  key={card.id}
+                  onClick={() => !card.isMatched && !endTime && flipCard(card.id)}
+                  elevation={1}
+                  sx={{
+                    width: 80, 
+                    height: 80,
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    fontSize: '1.875rem', 
+                    borderRadius: 1,
+                    cursor: !card.isMatched && !endTime ? 'pointer' : 'default',
+                    bgcolor: card.isMatched 
+                      ? 'success.light' 
+                      : card.isFlipped 
+                        ? 'primary.light' 
+                        : 'grey.300',
+                    transition: 'background-color 0.2s',
+                    '&:hover': {
+                      bgcolor: !card.isMatched && !endTime 
+                        ? 'grey.400' 
+                        : undefined
+                    }
+                  }}
+                >
+                  {(card.isFlipped || card.isMatched) ? card.value : '?'}
+                </Paper>
+              ))}
+            </Grid>
+          )}
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
 };
 
