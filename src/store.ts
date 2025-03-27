@@ -27,6 +27,7 @@ const cardsDeck = [
 export type TMemoryGameState = {
   board: TCardOnBoard[],
   startTime: number | null,
+  endTime: number | null,
   startGame: (level: 'very-easy' | 'easy' | 'medium' | 'hard') => void
   flipCard: (id: string) => void
 }
@@ -43,6 +44,7 @@ export const createMemoryGameStore = ({
   const memoryGameStateCreator: StateCreator<TMemoryGameState> = (set, getState) => ({
     board: [],
     startTime: null,
+    endTime: null,
     startGame: (level: 'very-easy' | 'easy' | 'medium' | 'hard') => {
       const numberOfCards = level === 'very-easy' ? 4 : level === 'easy' ? 8 : level === 'medium' ? 12 : 16
       const cards = cardsDeck.slice(0, numberOfCards / 2)
@@ -72,8 +74,6 @@ export const createMemoryGameStore = ({
 
       const allFlippedCards = board.filter((card) => card.isFlipped)
       const allFlippedCardsIds = allFlippedCards.map((card) => card.id)
-      const allFlippedCardsValues = allFlippedCards.map((card) => card.value)
-      const areFlippedCardsMatching = allFlippedCardsValues.every((value, index, array) => value === array[0])
       const numberOfFlippedCards = allFlippedCards.length
 
       if (numberOfFlippedCards === 2) {
@@ -82,7 +82,7 @@ export const createMemoryGameStore = ({
             return { ...card, isFlipped: true }
           }
           if (allFlippedCardsIds.includes(card.id)) {
-            return { ...card, isFlipped: false, isMatched: areFlippedCardsMatching }
+            return { ...card, isFlipped: false }
           }
           return card
         })
@@ -96,6 +96,30 @@ export const createMemoryGameStore = ({
             return card
           })
         })
+      }
+
+      const boardAfterFlipping = getState().board
+
+      const allFlippedCardsAfterFlipping = boardAfterFlipping.filter((card) => card.isFlipped)
+      const allFlippedCardsIdsAfterFlipping = allFlippedCardsAfterFlipping.map((card) => card.id)
+      if(allFlippedCardsAfterFlipping.length === 2) {
+        const allFlippedCardsValuesAfterFlipping = allFlippedCardsAfterFlipping.map((card) => card.value)
+        const areFlippedCardsMatchingAfterFlipping = allFlippedCardsValuesAfterFlipping.every((value, index, array) => value === array[0])
+      
+        const newBoard = boardAfterFlipping.map((card) => {
+          if (allFlippedCardsIdsAfterFlipping.includes(card.id)) {
+            return { ...card, isMatched: areFlippedCardsMatchingAfterFlipping }
+          }
+          return card
+        })
+        set({ board: newBoard })
+      }
+      
+      const finalBoard = getState().board
+
+      const allMatchedCards = finalBoard.filter((card) => card.isMatched)
+      if (allMatchedCards.length === finalBoard.length) {
+        set({ endTime: getTime() })
       }
     },
   })

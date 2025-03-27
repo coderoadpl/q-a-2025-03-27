@@ -144,4 +144,30 @@ describe('Memory game store', () => {
         })
     })
   })
+
+  describe('User wants match all possible cards combinations', () => {
+    it('should set endTime', () => {
+      const { getState } = createMemoryGameStoreWithMockedTime()
+
+      getState().startGame('very-easy')
+
+      const firstCardId = getState().board[0].id
+      const matchedCardId = getState().board
+        .filter((card) => card.id !== firstCardId)
+        .find((card) => card.value === getState().board[0].value)!.id
+      const thirdCardId = getState().board
+        .filter((card) => card.id !== firstCardId && card.id !== matchedCardId)[0].id
+      const fourthCardId = getState().board
+        .filter((card) => card.id !== firstCardId && card.id !== matchedCardId && card.id !== thirdCardId)[0].id
+
+      getState().flipCard(firstCardId)
+      getState().flipCard(matchedCardId)
+      getState().flipCard(thirdCardId)
+      getState().flipCard(fourthCardId)
+
+      const finalState = getState()
+      
+      expect(finalState.endTime).toBe(MOCKED_TIME)
+    })
+  })
 })
