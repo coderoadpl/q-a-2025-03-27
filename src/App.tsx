@@ -89,7 +89,6 @@ const App = () => {
             </Box>
           )}
           
-          {/* Game board */}
           {board.length > 0 && (
             <Box 
               sx={{ 
