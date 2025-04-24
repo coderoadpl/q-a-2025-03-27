@@ -5,11 +5,11 @@ import {
   Typography, 
   Button, 
   Container, 
-  Paper, 
   Stack,
   ThemeProvider,
   createTheme
 } from "@mui/material";
+import { Card } from "./Card";
 
 const theme = createTheme();
 
@@ -44,27 +44,27 @@ const App = () => {
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
               <Button 
                 variant="contained" 
-              onClick={() => startGame('very-easy')}
-            >
-              Very Easy
-            </Button>
-            <Button 
-              variant="contained" 
-              onClick={() => startGame('easy')}
-            >
-              Easy
-            </Button>
-            <Button 
-              variant="contained" 
-              onClick={() => startGame('medium')}
-            >
-              Medium
-            </Button>
-            <Button 
-              variant="contained" 
-              onClick={() => startGame('hard')}
-            >
-              Hard
+                onClick={() => startGame('very-easy')}
+              >
+                Very Easy
+              </Button>
+              <Button 
+                variant="contained" 
+                onClick={() => startGame('easy')}
+              >
+                Easy
+              </Button>
+              <Button 
+                variant="contained" 
+                onClick={() => startGame('medium')}
+              >
+                Medium
+              </Button>
+              <Button 
+                variant="contained" 
+                onClick={() => startGame('hard')}
+              >
+                Hard
               </Button>
             </Stack>
           )}
@@ -101,34 +101,14 @@ const App = () => {
               }}
             >
               {board.map((card) => (
-                <Paper
+                <Card
                   key={card.id}
-                  onClick={() => !card.isMatched && !endTime && flipCard(card.id)}
-                  elevation={1}
-                  sx={{
-                    aspectRatio: '1/1',
-                    width: '100%',
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    fontSize: '1.875rem', 
-                    borderRadius: 1,
-                    cursor: !card.isMatched && !endTime ? 'pointer' : 'default',
-                    bgcolor: card.isMatched 
-                      ? 'success.light' 
-                      : card.isFlipped 
-                        ? 'primary.light' 
-                        : 'grey.300',
-                    transition: 'background-color 0.2s',
-                    '&:hover': {
-                      bgcolor: !card.isMatched && !endTime 
-                        ? 'grey.400' 
-                        : undefined
-                    }
-                  }}
-                >
-                  {(card.isFlipped || card.isMatched) ? card.value : '?'}
-                </Paper>
+                  id={card.id}
+                  value={card.value}
+                  isFlipped={card.isFlipped}
+                  isMatched={card.isMatched}
+                  onClick={!card.isMatched && !endTime ? () => flipCard(card.id) : undefined}
+                />
               ))}
             </Box>
           )}
