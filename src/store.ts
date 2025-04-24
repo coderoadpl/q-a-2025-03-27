@@ -48,6 +48,9 @@ export const createMemoryGameStore = ({
     const hideNotMatchedCards = () => {
       const board = getState().board
       const allFlippedNotMatchedCards = board.filter((card) => card.isFlipped && !card.isMatched)
+      
+      if (allFlippedNotMatchedCards.length <= 1) return
+
       const allFlippedNotMatchedCardsIds = allFlippedNotMatchedCards.map((card) => card.id)
       const newBoard = board.map((card) => {
         if (allFlippedNotMatchedCardsIds.includes(card.id)) {
