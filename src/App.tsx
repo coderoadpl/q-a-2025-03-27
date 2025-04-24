@@ -15,12 +15,11 @@ const theme = createTheme();
 
 const App = () => {
   const { board, startTime, endTime, startGame, flipCard, restartGame } = useMemoryGameStore((state) => state);
-  const isGameStarted = Boolean(startTime && !endTime)
+  const isGameStarted = Boolean(startTime)
   const isRestartAvailable = isGameStarted
 
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(startTime ? Math.floor((Date.now() - startTime) / 1000) : 0);
 
-  // Update timer while game is running
   useEffect(() => {
     if (!startTime || endTime) return;
     
@@ -31,7 +30,6 @@ const App = () => {
     return () => clearInterval(interval);
   }, [startTime, endTime]);
 
-  // Calculate grid columns based on board size
   const gridColumns = Math.floor(Math.sqrt(board.length)) || 4;
 
   return (

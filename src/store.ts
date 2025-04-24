@@ -18,7 +18,7 @@ const cardsDeck = [
   { value: '🍌' },
   { value: '🍇' },
   { value: '🍓' },
-  { value: '🍌' },
+  { value: '🍉' },
   { value: '🍅' },
   { value: '🍆' },
   { value: '🥑' },
